@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  pegawai
+}
+
+enum StatusAbsensi {
+  hadir
+  terlambat
+  pulang_cepat
+  alfa
+}
+
+enum StatusAbsensiPulang {
+  hadir
+  terlambat
+  pulang_cepat
+  alfa
+}
+
+enum StatusIzin {
+  pending
+  disetujui
+  ditolak
+}
+
+model Pegawai {
+  id_pegawai       Int      @id @default(autoincrement())
+  nip              String   @unique
+  nama_lengkap     String
+  jenis_kelamin    String
+  tgl_lahir        DateTime
+  jabatan          String
+  id_divisi        Int
+  no_telepon       String
+  foto_profil      String?
+  password         String
+  role             Role     @default(pegawai)
+  jam_masuk_custom String?
+  jam_pulang_custom String?
+
+  divisi       Divisi           @relation(fields: [id_divisi], references: [id_divisi])
+  login        Login?
+  absensi      Absensi[]
+  izin         Izin[]
+  rekapPrebulan RekapPrebulan[]
+
+  @@map("pegawai")
+}
+
+model Login {
+  nip      String @id
+  password String
+
+  pegawai Pegawai @relation(fields: [nip], references: [nip], onDelete: Cascade)
+
+  @@map("login")
+}
+
+model Divisi {
+  id_divisi   Int    @id @default(autoincrement())
+  nama_divisi String
+
+  pegawai Pegawai[]
+
+  @@map("divisi")
+}
+
+model JamKerja {
+  id_jam      Int     @id @default(autoincrement())
+  nama_jam    String
+  jam_masuk   String?
+  batas_masuk String?
+  jam_pulang  String?
+  batas_pulang String?
+
+  absensi Absensi[]
+
+  @@map("jam_kerja")
+}
+
+model Absensi {
+  id_absensi        Int                  @id @default(autoincrement())
+  id_pegawai        Int
+  tgl_absensi       DateTime             @default(now())
+  jam_masuk         DateTime?
+  jam_pulang        DateTime?
+  status            StatusAbsensi?
+  status_pulang     StatusAbsensiPulang?
+  id_jam            Int
+  jam_terlambat     Int                  @default(0)
+  total_jam_kerja   Decimal              @default(0) @db.Decimal(5, 2)
+  sudah_izin_hari_ini Boolean            @default(false)
+
+  pegawai  Pegawai  @relation(fields: [id_pegawai], references: [id_pegawai], onDelete: Cascade)
+  jamKerja JamKerja @relation(fields: [id_jam], references: [id_jam], onDelete: Restrict)
+
+  @@index([id_pegawai, tgl_absensi])
+  @@map("absensi")
+}
+
+model Izin {
+  id_izin     Int        @id @default(autoincrement())
+  id_pegawai  Int
+  tgl_mulai   DateTime
+  tgl_selesai DateTime
+  alasan      String
+  filepath    String?
+  status_izin StatusIzin @default(pending)
+
+  pegawai Pegawai @relation(fields: [id_pegawai], references: [id_pegawai], onDelete: Cascade)
+
+  @@map("izin")
+}
+
+model Hari {
+  id_hari Int    @id @default(autoincrement())
+  nik     String
+  hari    String
+
+  @@map("hari")
+}
+
+model RekapPrebulan {
+  id_rekap      Int    @id @default(autoincrement())
+  id_pegawai    Int
+  tahun         Int
+  bulan         Int
+  total_hadir   Int    @default(0)
+  total_terlambat Int  @default(0)
+  total_izin    Int    @default(0)
+  total_alfa    Int    @default(0)
+  total_jam_kerja Decimal @default(0) @db.Decimal(8, 2)
+  total_jam_terlambat Int @default(0)
+
+  pegawai Pegawai @relation(fields: [id_pegawai], references: [id_pegawai], onDelete: Cascade)
+
+  @@unique([id_pegawai, tahun, bulan])
+  @@map("rekap_prebulan")
+}

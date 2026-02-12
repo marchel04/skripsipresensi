@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+.desc-user .ant-descriptions-item-label {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  white-space: nowrap;
+}
+
+.desc-user .ant-descriptions-item-content {
+  width: auto;
+}
