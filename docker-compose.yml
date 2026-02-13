@@ -21,12 +21,8 @@ services:
       context: ./api-absensi
     ports:
       - "54000:4000"
-    environment:
-      - DATABASE_URL=mysql://user_absensi:user_password@db:3306/absensi_db
-      - APP_ENV=development
-      - PORT=4000
-      - JWT_SECRET=your_jwt_secret_here
-      - ORIGIN=http://localhost:53000
+    env_file:
+      - ./api-absensi/.env
     depends_on:
       db:
         condition: service_healthy
@@ -34,10 +30,10 @@ services:
   frontend:
     build:
       context: ./aplikasi-absensi-nextjs
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:54000/api}
     ports:
       - "53000:3000"
+    env_file:
+      - ./aplikasi-absensi-nextjs/.env
     depends_on:
       - api
 
