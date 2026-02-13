@@ -17,5 +17,5 @@ RUN npx prisma generate
 # Expose backend port
 EXPOSE 4000
 
-# Start the application
-CMD ["npm", "run", "dev"]
+# Start the application (run migrations first, then start server)
+CMD npx prisma migrate deploy && npm run dev
