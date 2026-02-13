@@ -1,0 +1,5 @@
+APP_ENV="developement"
+DATABASE_URL="mysql://user:password@ip:3306/nama_databse"
+PORT=4000
+JWT_SECRET=
+ORIGIN=https://your-production-website.com
