@@ -8,8 +8,9 @@ RUN npm install
 
 COPY . .
 
-# Set environment variables for build if necessary
-# ENV NEXT_PUBLIC_API_URL=http://localhost:54000/api 
+# Set build-time environment variable for Next.js
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN npm run build
 
