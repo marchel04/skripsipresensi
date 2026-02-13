@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# local env files (only ignore local variants, keep .env tracked for private repo)
+.env*.local
+
 # debug
 npm-debug.log*
 yarn-debug.log*
