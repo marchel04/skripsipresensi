@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copy .env file first (needed for NEXT_PUBLIC_* vars during build)
+COPY .env ./
+
 COPY . .
 
 RUN npm run build
