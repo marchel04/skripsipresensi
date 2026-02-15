@@ -14,21 +14,29 @@ export async function GET(req) {
             }
         );
 
-        const data = await backendRes.json();
+        // Try to read text first (protect against empty body)
+        const text = await backendRes.text();
+        if (!text) {
+            console.error("Empty response body from backend /auth/me", { status: backendRes.status });
+            return NextResponse.json({ success: false, message: "Empty response from backend" }, { status: 502 });
+        }
 
-        console.log("Response from /me:", data);
-
-        return NextResponse.json(data, {
-            status: backendRes.status,
-        });
+        try {
+            const data = JSON.parse(text);
+            console.log("Response from /me:", data);
+            return NextResponse.json(data, { status: backendRes.status });
+        } catch (parseError) {
+            console.error("Failed to parse JSON from backend /auth/me", parseError, text);
+            return NextResponse.json({ success: false, message: "Invalid JSON from backend" }, { status: 502 });
+        }
     } catch (error) {
         console.error("Error fetching /me:", error);
         return NextResponse.json(
             {
                 success: false,
-                message: "Gagal mengambil data user",
+                message: error?.message || "Gagal mengambil data user",
             },
-            { status: 500 }
+            { status: 502 }
         );
     }
 }
