@@ -296,16 +296,6 @@ const BerandaClient = () => {
       label: "Absen Pulang",
       children: (() => {
         if (absen?.jam_pulang) return dayjs(absen.jam_pulang).format("YYYY-MM-DD HH:mm:ss");
-        // jika belum absen pulang, dan ada jamKerja.batas_pulang, cek apakah waktu sekarang sudah melewati batas
-        const batasStr = absen?.jamKerja?.batas_pulang || absen?.jamKerja?.jam_pulang;
-        if (batasStr) {
-          const tanggal = absen?.tgl_absensi ? dayjs(absen.tgl_absensi).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
-          // Parse batas pulang without relying on dayjs timezone plugin in the frontend
-          const batas = dayjs(`${tanggal} ${batasStr}`, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HH:mm:ss"]);
-          if (dayjs().isAfter(batas)) {
-            return "Belum absen pulang";
-          }
-        }
         return "Belum absen pulang";
       })(),
     },

@@ -57,7 +57,6 @@ const JamKerjaClient = () => {
       jam_masuk: dayjs(record.jam_masuk, FORMAT),
       batas_masuk: dayjs(record.batas_masuk, FORMAT),
       jam_pulang: dayjs(record.jam_pulang, FORMAT),
-      batas_pulang: record.batas_pulang ? dayjs(record.batas_pulang, FORMAT) : null,
     });
 
     setIsModalOpen(true);
@@ -69,7 +68,6 @@ const JamKerjaClient = () => {
       jam_masuk: values.jam_masuk?.format(FORMAT),
       batas_masuk: values.batas_masuk?.format(FORMAT),
       jam_pulang: values.jam_pulang?.format(FORMAT),
-      batas_pulang: values.batas_pulang?.format(FORMAT),
     };
 
     try {
