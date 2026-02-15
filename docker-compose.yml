@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: absensi_db
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: user_absensi
+      MYSQL_PASSWORD: user_password
+    ports:
+      - "53306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./api-absensi
+    ports:
+      - "54000:4000"
+    env_file:
+      - ./api-absensi/.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./aplikasi-absensi-nextjs
+    ports:
+      - "53000:3000"
+    env_file:
+      - ./aplikasi-absensi-nextjs/.env
+    depends_on:
+      - api
+
+volumes:
+  db_data:
